@@ -2,6 +2,7 @@ class @Mercury.Region
 
   constructor: (@element, @window, @options = {}) ->
     Mercury.log("building #{@type()}", @element, @options)
+    @originalContent = $.trim @element.html()
     @document = @window.document
     @name = @element.attr(Mercury.config.regions.identifier)
     @history = new Mercury.HistoryBuffer()
@@ -9,7 +10,6 @@ class @Mercury.Region
     @bindEvents()
     @pushHistory()
     @element.data('region', @)
-
 
   type: -> 'unknown'
 
@@ -101,9 +101,14 @@ class @Mercury.Region
 
 
   serialize: ->
-    return {
+    content = @content(null, true)
+    changed = content != @originalContent
+    data = {
       type: @type()
       data: @dataAttributes()
-      value: @content(null, true)
+      value: content
+      changed: changed
       snippets: @snippets()
     }
+    data.originalValue = @originalContent if changed
+    data
