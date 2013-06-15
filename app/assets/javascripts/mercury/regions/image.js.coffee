@@ -7,6 +7,7 @@ class @Mercury.Regions.Image extends Mercury.Region
   type: -> type
 
   constructor: (@element, @window, @options = {}) ->
+    @originalSrc = @element.attr('src')
     super
 
 
@@ -74,8 +75,11 @@ class @Mercury.Regions.Image extends Mercury.Region
 
 
   serialize: ->
+    src = @element.attr('src')
+    changed = src != @originalSrc
     return {
       type: type
+      changed: changed
       data: @dataAttributes()
       attributes:
         src: @element.attr('src')
